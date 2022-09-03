@@ -46,4 +46,12 @@ class ConsultController extends Controller
     $consults = R::findAll( 'consultation' , ' ORDER BY id DESC LIMIT ? ', [$request->input('limit')] );
     return $consults;
   }
+
+  // Return object with key=id if found
+  // return [] if not found
+  public function getConsultByHN(Request $request) {
+    R::setup(env('DB_URL'), env('DB_USERNAME'), env('DB_PASSWORD'));
+    $consults = R::findAll( 'consultation' , ' hn = ? ', [$request->input('HN')] );
+    return $consults;
+  }
 }
