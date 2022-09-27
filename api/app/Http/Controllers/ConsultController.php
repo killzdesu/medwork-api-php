@@ -35,6 +35,8 @@ class ConsultController extends Controller
     foreach ($patientData as $el) {
       $PatientArray[$el] = $request->input($el);
     }
+    $PatientArray['dob'] = date('Y-m-d', $PatientArray['dob']/1000);
+    var_dump($PatientArray['dob']);
     $Patient->UpdatePatient($PatientArray['hn'], $PatientArray);
 
     // R::setup(env('DB_URL'), env('DB_USERNAME'), env('DB_PASSWORD'));
