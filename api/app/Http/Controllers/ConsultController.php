@@ -7,12 +7,16 @@ use App\User;
 require __DIR__ . '/../../../rb.php';
 use R as R;
 use App\Http\Controllers\JWTController;
+// use App\Http\Controllers\PatientController;
 
 class ConsultController extends Controller
 {
 
   public function addConsult(Request $request)
   {
+    $patientData = [
+      'hn', 'name', 'surname', 'gender', 'prefix', 'dob'
+    ];
     $consultData = [
       'hn', 'name', 'ward', 'cover', 'an',
       'urgency', 'consult_from', 'sub', 'consult_to', 'detail', 'dx',
@@ -26,13 +30,20 @@ class ConsultController extends Controller
         ];
       }
     }
-    
-    R::setup(env('DB_URL'), env('DB_USERNAME'), env('DB_PASSWORD'));
-    
+    $Patient = new PatientController();
+    $PatientArray = array();
+    foreach ($patientData as $el) {
+      $PatientArray[$el] = $request->input($el);
+    }
+    $Patient->UpdatePatient($PatientArray['hn'], $PatientArray);
+
+    // R::setup(env('DB_URL'), env('DB_USERNAME'), env('DB_PASSWORD'));
+
     $newConsult = R::dispense('consultation');
     foreach ($consultData as $el) {
       $newConsult[$el] = $request->input($el);
     }
+    $newConsult['name'] .= ' '.$request->input('surname');
     $newId = R::store($newConsult);
     return [
       'result' => true,
