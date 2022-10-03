@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
+use Illuminate\Http\Request;
 require_once __DIR__ . '/../../../rb.php';
 use R as R;
 
@@ -23,9 +24,12 @@ class PatientController extends BaseController
     $id = R::store($pt);
   }
   public function GetPatient($HN) {
+  }
+
+  public function getPatientByHN(Request $request) {
     R::setup(env('DB_URL'), env('DB_USERNAME'), env('DB_PASSWORD'));
     
-    $pt = R::findOne('patient', ' HN = ? ', [$HN]);
+    $pt = R::findOne('patient', ' HN = ? ', [$request->input('HN')]);
     if ($pt == null) {
       $pt = array();
     } else {

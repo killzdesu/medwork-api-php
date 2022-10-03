@@ -25,6 +25,7 @@ $router->get('/register', 'UserController@register');
 $router->get('/ipd-consult', 'ConsultController@addConsult');
 $router->get('/consults', 'ConsultController@getConsult');
 $router->get('/find-consult-hn', 'ConsultController@getConsultByHN');
+$router->get('/find-hn', 'PatientController@getPatientByHN');
 
 $router->group(['prefix' => 'auth', 'middleware' => 'jwt.auth'], function ($router) {
   $router->get('test', 'UserController@test');

@@ -26,7 +26,7 @@ class ConsultController extends Controller
       if ($el != 'sub' && $request->input($el) == NULL) {
         return [
           'result' => false,
-          'error' => 'Data is not complete'
+          'error' => 'Data is not complete'.' ['.$el.']'
         ];
       }
     }
@@ -36,10 +36,7 @@ class ConsultController extends Controller
       $PatientArray[$el] = $request->input($el);
     }
     $PatientArray['dob'] = date('Y-m-d', $PatientArray['dob']/1000);
-    var_dump($PatientArray['dob']);
     $Patient->UpdatePatient($PatientArray['hn'], $PatientArray);
-
-    // R::setup(env('DB_URL'), env('DB_USERNAME'), env('DB_PASSWORD'));
 
     $newConsult = R::dispense('consultation');
     foreach ($consultData as $el) {
