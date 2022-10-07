@@ -22,6 +22,7 @@ class ConsultController extends Controller
       'urgency', 'consult_from', 'sub', 'consult_to', 'detail', 'dx',
       'consult', 'consultee', 'tel'
     ];
+    // Check consult data completeness
     foreach ($consultData as $el) {
       if ($el != 'sub' && $request->input($el) == NULL) {
         return [
@@ -30,19 +31,33 @@ class ConsultController extends Controller
         ];
       }
     }
+
+    // Add/Update Patient info
     $Patient = new PatientController();
     $PatientArray = array();
     foreach ($patientData as $el) {
       $PatientArray[$el] = $request->input($el);
     }
+    $PatientArray['hn'] = strtoupper($PatientArray['hn']); // Uppercase HN
     $PatientArray['dob'] = date('Y-m-d', $PatientArray['dob']/1000);
     $Patient->UpdatePatient($PatientArray['hn'], $PatientArray);
 
+    // Add Consult data
     $newConsult = R::dispense('consultation');
     foreach ($consultData as $el) {
       $newConsult[$el] = $request->input($el);
     }
+    $newConsult['hn'] = strtoupper($newConsult['hn']); // Uppercase HN
+    // Add fullname to consult data
     $newConsult['name'] .= ' '.$request->input('surname');
+    // Add Sex to consult data
+    $newConsult['gender'] = $request->input('gender');
+    // Add Age to consult data -> in format 'Year<space>month' : '25 6'
+    $Age = new \DateTime(); 
+    $Age->setTimestamp(($request->input('dob'))/1000);
+    $newConsult['age'] = $Age->diff(new \DateTime())->format('%Y %m');
+
+    // Add new consultation
     $newId = R::store($newConsult);
     return [
       'result' => true,
